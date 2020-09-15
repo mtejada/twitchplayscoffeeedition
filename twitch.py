@@ -8,7 +8,7 @@ class Twitch:
     s = None
 
     def twitch_login_status(self, data):
-        if not re.match(r'^:(testserver\.local|tmi\.twitch\.tv) NOTICE \* :Login unsuccessful\r\n$', data):
+        if not re.match(r'^:(testserver\.local|tmi\.twitch\.tv) NOTICE \* :Login unsuccessful\r\n$', data.decode()):
             return True
         else:
             return False
@@ -28,9 +28,9 @@ class Twitch:
             sys.exit()
         print("Connected to twitch")
         print("Sending our details to twitch...")
-        s.send('USER %s\r\n' % user)
-        s.send('PASS %s\r\n' % key)
-        s.send('NICK %s\r\n' % user)
+        s.send(('USER %s\r\n' % user).encode())
+        s.send(('PASS %s\r\n' % key).encode())
+        s.send(('NICK %s\r\n' % user).encode())
 
         if not self.twitch_login_status(s.recv(1024)):
             print("... and they didn't accept our details")
@@ -39,19 +39,19 @@ class Twitch:
             print("... they accepted our details")
             print("Connected to twitch.tv!")
             self.s = s
-            s.send('JOIN #%s\r\n' % user)
+            s.send(('JOIN #%s\r\n' % user).encode())
             s.recv(1024)
 
     def check_has_message(self, data):
         return re.match(
             r'^:[a-zA-Z0-9_]+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+(\.tmi\.twitch\.tv|\.testserver\.local) PRIVMSG #[a-zA-Z0-9_]+ :.+$',
-            data)
+            data.decode())
 
     def parse_message(self, data):
         return {
             'channel': re.findall(r'^:.+\![a-zA-Z0-9_]+@[a-zA-Z0-9_]+.+ PRIVMSG (.*?) :', data)[0],
             'username': re.findall(r'^:([a-zA-Z0-9_]+)\!', data)[0],
-            'message': re.findall(r'PRIVMSG #[a-zA-Z0-9_]+ :(.+)', data)[0].decode('utf8')
+            'message': re.findall(r'PRIVMSG #[a-zA-Z0-9_]+ :(.+)', data)[0]
         }
 
     def twitch_recieve_messages(self, amount=1024):
@@ -66,10 +66,11 @@ class Twitch:
             self.twitch_connect(self.user, self.oauth)
             return None
 
-        if data.startswith("PING"):
-            self.s.send("PONG " + data.split(" ", 3)[1] + "\r\n")
+        if data.decode().startswith("PING"):
+            self.s.send(("PONG " + data.split(" ", 3)[1] + "\r\n").encode())
             return None
 
         if self.check_has_message(data):
-            return [self.parse_message(line) for line in filter(None, data.split('\r\n'))]
+            return [self.parse_message(line) for line in filter(None, data.decode()
+.split('\r\n'))]
 

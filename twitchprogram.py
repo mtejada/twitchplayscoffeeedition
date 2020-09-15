@@ -11,13 +11,16 @@ def press_key(key_to_press):
 
 
 t = twitch.Twitch()
-cmd = "export DISPLAY=:0 && xdotool search --name \"Notepad\""
-wid = re.findall("[0-9]+", subprocess.check_output(cmd, shell=True))[0]
+cmd = "export DISPLAY=:0 && xdotool search --name \"PCSXR\""
+
+wid = re.findall("[0-9]+", subprocess.check_output(cmd, shell=True).decode('ascii'))[1]
+#print( subprocess.check_output(cmd, shell=True).decode('ascii'))
+#exit()
 subprocess.call(f"xdotool windowactivate {wid}", shell=True)
 
 # Enter your twitch username and oauth-key below
-user = "CafeBot"
-oauth = prop.twitchdata['pass']
+username = "coffeemastermt"
+key = prop.twitchdata['pass']
 t.twitch_connect(username, key)
 
 
@@ -34,7 +37,7 @@ while True:
             # Got a message, let's extract some details from it
             msg = message['message'].lower()
             username = message['username'].lower()
-
+            print(msg)
             # Change this to make Twitch fit to your game!
             if msg.startswith("!a"):
                 press_key("X")
