@@ -39,10 +39,22 @@ while True:
             username = message['username'].lower()
             print(msg)
             # Change this to make Twitch fit to your game!
-            if msg.startswith("!a"):
-                press_key("X")
-            if msg.startswith("!b"):
+            if msg.startswith("!x"):
                 press_key("Z")
+            if msg.startswith("!c"):
+                press_key("X")
+            if msg.startswith("!s"):
+                press_key("S")
+            if msg.startswith("!t"):
+                press_key("D")
+            if msg.startswith("!r1"):
+                press_key("r")
+            if msg.startswith("!r2"):
+                press_key("t")
+            if msg.startswith("!l1"):
+                press_key("w")
+            if msg.startswith("!l2"):
+                press_key("e")
             if msg.startswith("!l"):
                 press_key("Left")
             if msg.startswith("!r"):
@@ -52,6 +64,6 @@ while True:
             if msg.startswith("!d"):
                 press_key("Down")
             if msg.startswith("!start"):
-                press_key("S")
+                press_key("v")
             if msg.startswith("!select"):
-                press_key("A")
+                press_key("c")
